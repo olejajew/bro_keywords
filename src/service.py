@@ -35,7 +35,7 @@ async def init():
 def proceed_message(phone, message):
     print(f"Proceeding message: {message.text}. Keywords: {keywords}")
     for keyword in keywords:
-        if keyword in message.message:
+        if keyword.lower() in message.message.lower():
             trader_id = get_trader_id_by_phone(phone)
             if trader_id:
                 send_message_to_core(trader_id, message)
