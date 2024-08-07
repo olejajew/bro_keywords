@@ -17,6 +17,11 @@ BOT_TOKEN = os.getenv('TG_CLIENT_BOT_TOKEN')
 ASK_TRADER_ID, ASK_PHONE, ASK_CODE = range(3)
 
 
+async def start(update: Update, context: CallbackContext):
+    await update.message.reply_text('Привет! Я бот, который поможет вам авторизоваться в нашем сервисе. '
+                                    'Для начала работы введите /add_me')
+
+
 async def log_out(update: Update, context: CallbackContext):
     phone = context.user_data['phone']
     if phone is None:
@@ -77,6 +82,7 @@ async def cancel(update: Update, context: CallbackContext):
 async def async_init_bot():
     application = Application.builder().token(BOT_TOKEN).build()
 
+    application.add_handler(CommandHandler('start', start))
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('add_me', add_me)],
         states={
