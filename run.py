@@ -2,7 +2,6 @@ import os
 
 from src.tg_client import init_database_users
 from src.tg_bot import init_bot
-from src.service import init
 from src.db.database_manager import db_manager
 import asyncio
 
@@ -11,7 +10,6 @@ async def init_environment():
     session_dir = 'sessions'
     os.makedirs(session_dir, exist_ok=True)
     db_manager.create_tables()
-    await init()
     await init_database_users()
 
 

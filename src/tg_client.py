@@ -23,8 +23,7 @@ async def start_listening_client(phone):
 
     @client.on(events.NewMessage)
     async def my_event_handler(event):
-        print(event.message)
-        proceed_message(phone, event.message)
+        await proceed_message(phone, event.message)
 
     await client.run_until_disconnected()
 
@@ -45,8 +44,8 @@ async def init_client_with_code(phone, code):
         return ERROR
 
 
-async def init_client_by_phone(user_id, trader_id, phone):
-    save_user(trader_id, user_id, phone)
+async def init_client_by_phone(user_id, phone):
+    save_user(user_id, phone)
     client = TelegramClient(f'sessions/{phone}', api_id, api_hash)
     clients[phone] = client
     await client.connect()

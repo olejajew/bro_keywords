@@ -53,8 +53,8 @@ class DatabaseManager:
             id SERIAL PRIMARY KEY,
             phone_number VARCHAR(255) NOT NULL UNIQUE,
             user_id BIGINT NOT NULL,
-            trader_id VARCHAR(255) NOT NULL,
             is_authenticated BOOLEAN DEFAULT FALSE,
+            chat_id BIGINT NULL,
             CONSTRAINT unique_phone_user UNIQUE (phone_number, user_id)
         );
         """)

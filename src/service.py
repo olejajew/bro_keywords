@@ -1,42 +1,29 @@
 import traceback
 
-from src.rest.requests_provider import get_keywords
-from src.db.config_dao import save_keywords, get_keywords_from_config
-from src.db.authorized_users_dao import get_trader_id_by_phone
-from src.rest.requests_provider import send_message_to_core
-
-keywords = []
+from src.db.authorized_users_dao import get_user_id_by_phone, get_chat_id
+from src.db.config_dao import get_user_words
+from src.rest.tg_rest_client import send_message
 
 
-async def init_keywords():
-    global keywords  # Declare keywords as global
-    try:
-        keywords = await get_keywords()
-        if len(keywords) > 0:
-            save_keywords(keywords)
-            print('Keywords have been updated')
-    except Exception as e:
-        print("Error in init_keywords: ", str(e))
-        print(traceback.format_exc())
+async def proceed_message(phone, message):
+    sender = message.sender_id
+    user_id = get_user_id_by_phone(phone)
+    if user_id == sender:
+        return
 
+    chat_id = get_chat_id(user_id)
+    if chat_id == message.chat_id:
+        return
 
-async def init():
-    print('init function called')
-    global keywords
-    try:
-        await init_keywords()
-        keywords = get_keywords_from_config()
-        print('Initialization completed. Keywords: ', keywords)
-    except Exception as e:
-        print("Error in init: ", str(e))
-        print(traceback.format_exc())
-
-
-def proceed_message(phone, message):
-    print(f"Proceeding message: {message.text}. Keywords: {keywords}")
+    keywords = get_user_words(user_id)
     for keyword in keywords:
-        if keyword.lower() in message.message.lower():
-            trader_id = get_trader_id_by_phone(phone)
-            if trader_id:
-                send_message_to_core(trader_id, message)
-
+        if keyword.lower().strip() in message.text.lower():
+            print(f"Keyword {keyword} found in message {message.text}. User id: {user_id}")
+            if chat_id:
+                print(f"Chat id: {chat_id}")
+                await message.forward_to(chat_id)
+                await send_message(chat_id, "Новое сообщеение, бро")
+            else:
+                print(f"Chat id: me")
+                await message.forward_to('me')
+                await send_message(user_id, "Новое сообщение, бро")
