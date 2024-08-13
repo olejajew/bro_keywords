@@ -9,7 +9,7 @@ from src.tg_client import init_client_by_phone, init_client_with_code, sign_out,
 from src.utils import extract_digits
 from dotenv import load_dotenv
 from src.db.config_dao import get_user_words, save_keywords
-from src.db.authorized_users_dao import update_chat_id
+from src.db.authorized_users_dao import update_chat_id, get_phone_by_user_id
 
 load_dotenv()
 
@@ -32,7 +32,8 @@ async def start(update: Update, context: CallbackContext):
 
 
 async def log_out(update: Update, context: CallbackContext):
-    phone = context.user_data['phone']
+    user_id = update.message.from_user.id
+    phone = get_phone_by_user_id(user_id)
     if phone is None:
         await update.message.reply_text('И вообще хз, кто ты был, бро')
         return ConversationHandler.END

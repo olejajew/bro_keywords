@@ -47,3 +47,12 @@ def get_user_id_by_phone(phone):
     if result:
         return result[0][0]
     return None
+
+
+def get_phone_by_user_id(user_id):
+    result = db_manager.execute_query(
+        "SELECT phone_number FROM authorized_users WHERE user_id = %s", (user_id, )
+    )
+    if result:
+        return result[0][0]
+    return None
