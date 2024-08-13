@@ -36,7 +36,7 @@ async def init_client_with_code(phone, code):
     result = await client.sign_in(phone=phone, code=code, phone_code_hash=phone_code_hash)
     if result:
         mark_as_authenticated(phone)
-        await start_listening_client(phone)
+        asyncio.run(start_listening_client(phone))
         print(f"User {phone} successfully authorized!")
         return AUTHORIZED
     else:
